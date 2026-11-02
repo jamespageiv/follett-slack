@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Northfield State on Slack – Campus OS Mock-up</title><style>
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Lato,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:#1D1C1D;background:#1a1d21;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.view{display:none;height:100vh}
+.view:target,.view:has(:target){display:flex}
+body:not(:has(:target)) #ch-econ-2010-study-group{display:flex}
+.ws-view{flex-direction:column}
+.topbar{height:40px;flex-shrink:0;background:#350D36;display:flex;align-items:center;justify-content:center;position:relative}
+.search{width:100%;max-width:560px;background:rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:6px;padding:4px 12px;font-size:13px}
+.me{position:absolute;right:16px;width:28px;height:28px;border-radius:6px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ws-body{display:flex;flex:1;min-height:0}
+.sidebar{width:260px;flex-shrink:0;background:#3F0E40;color:#CFC3CF;font-size:15px;display:flex;flex-direction:column}
+.sb-head{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.ws-icon{width:36px;height:36px;border-radius:8px;background:#C96442;color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center}
+.ws-name{color:#fff;font-weight:800;font-size:17px}
+.sb-nav{padding:10px 8px;overflow-y:auto}
+.sb-sec{padding:6px 8px;margin-top:10px;font-size:14px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:6px}
+a.sb-item:hover{background:rgba(255,255,255,.1)}
+.sb-active{background:#1164A3;color:#fff}.hash{opacity:.7}
+.av,.av-xs,.av-sm,.av-stack{display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;border-radius:8px;flex-shrink:0}
+.av{width:36px;height:36px;font-size:15px}.av-sm{width:32px;height:32px;font-size:14px}
+.av-xs{width:20px;height:20px;font-size:11px;border-radius:4px}
+.av-stack{width:24px;height:24px;font-size:11px;border-radius:6px;box-shadow:0 0 0 2px #fff;margin-left:-6px}
+.av-stack:first-child{margin-left:0}
+.big-stack{width:36px;height:36px;font-size:15px;margin-left:-8px}.plus{background:#E8E8E8;color:#616061}
+.apptag{display:inline-block;background:#E8E8E8;color:#616061;font-size:10px;font-weight:700;border-radius:3px;padding:0 4px;margin-left:6px;vertical-align:2px}
+.sidebar .apptag{background:rgba(255,255,255,.15);color:#fff}
+.chan{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff}
+.chan-head{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid #E2E2E2}
+.chan-title{font-size:18px;font-weight:800}
+.mem-btn{display:flex;align-items:center;gap:6px;border:1px solid #E2E2E2;border-radius:6px;padding:3px 8px 3px 4px;color:#616061;font-size:14px}
+.mem-btn:hover{background:#f8f8f8}.stack{display:inline-flex;align-items:center}
+.tabs{display:flex;gap:20px;padding:0 20px;border-bottom:1px solid #E2E2E2;font-size:14px}
+.tab{padding:8px 0;border-bottom:2px solid transparent;color:#616061}
+.tab-msgs{border-color:#1D1C1D;color:#1D1C1D;font-weight:700}
+.view:has(.pins:target) .tab-msgs{border-color:transparent;color:#616061;font-weight:400}
+.view:has(.pins:target) .tab-pins{border-color:#1D1C1D;color:#1D1C1D;font-weight:700}
+.pinbar{display:flex;align-items:center;gap:6px;background:#FEF9EC;border-bottom:1px solid #E2E2E2;padding:8px 20px;font-size:14px}
+.pinbar-more{margin-left:auto;color:#1264A3;font-size:13px}
+.msgs{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;justify-content:flex-end}
+.pins{display:none;flex:1;overflow-y:auto;padding:20px}
+.pins:target{display:block}.view:has(.pins:target) .msgs{display:none}
+.daydiv{position:relative;text-align:center;margin:14px 0 6px}
+.daydiv:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #E2E2E2}
+.daydiv span{position:relative;background:#fff;border:1px solid #E2E2E2;border-radius:999px;padding:2px 12px;font-size:13px;font-weight:700}
+.msg{display:flex;gap:8px;padding:6px 20px}.msg:hover{background:#F8F8F8}
+.msg-pinned,.msg-pinned:hover{background:#FEF9EC}
+.mname{font-weight:800;font-size:15px}.mtime{font-size:12px;color:#616061;margin-left:4px}
+.mtext{font-size:15px;line-height:1.45}.muted{color:#616061}.small{font-size:13px}.tiny{font-size:12px}
+.react{display:inline-flex;gap:4px;align-items:center;margin:4px 4px 0 0;border:1px solid #1D9BD1;background:#E8F5FA;color:#1264A3;border-radius:999px;padding:1px 8px;font-size:13px}
+.folder-card{display:flex;gap:12px;align-items:center;width:320px;border:1px solid #E2E2E2;border-radius:8px;padding:10px;margin-top:8px;font-size:15px}
+.folder-card:hover{background:#F8F8F8}
+.folder-ic{width:40px;height:40px;border-radius:6px;background:#FFF4D6;display:inline-flex;align-items:center;justify-content:center;font-size:20px}
+.btn-go{display:inline-block;background:#007A5A;color:#fff;font-weight:700;font-size:14px;border-radius:6px;padding:6px 16px;margin-top:8px}
+.btn-ghost{display:inline-block;border:1px solid #999;font-weight:700;font-size:14px;border-radius:6px;padding:6px 16px;margin-top:8px}
+.composer{margin:0 20px 20px;border:1px solid #999;border-radius:8px;padding:10px 12px;color:#616061;font-size:15px}
+.pin-card{border:1px solid #E2E2E2;border-radius:8px;padding:14px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:10px}
+.files{list-style:none;padding-left:50px;margin:10px 0 0;font-size:14px;line-height:1.9}.link{color:#1264A3}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10}
+.overlay:target{display:flex}
+.modal{background:#fff;border-radius:12px;padding:22px;width:400px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal.wide{width:460px}.modal.center{text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.big{font-size:19px;font-weight:800}.huge{font-size:34px}.close{font-size:26px;color:#616061}
+.mlist{list-style:none;padding:0;margin:0;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.form{display:flex;flex-direction:column;gap:14px;font-size:15px;font-weight:700}
+.form input,.form select,.form textarea{display:block;width:100%;margin-top:4px;border:1px solid #999;border-radius:6px;padding:8px 10px;font:inherit;font-weight:400}
+.form-actions{display:flex;justify-content:flex-end;gap:8px}
+.cards-view{background:#F2F2F7;padding:40px;overflow:auto;height:auto;min-height:100vh}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:40px;max-width:900px;margin:0 auto;width:100%}
+.cap{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#616061;margin-bottom:12px}
+.invite{width:320px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.invite-head{display:flex;align-items:center;gap:6px;border-bottom:1px solid #E2E2E2;padding:10px 16px;font-size:13px;font-weight:700;color:#616061}
+.invite-body{padding:16px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.invite-title{font-size:18px;font-weight:800}.green{color:#007A5A}.invite-stack{margin:4px 0}
+.btn-join{display:block;text-align:center;background:#007A5A;color:#fff;font-weight:700;border-radius:8px;padding:9px;margin-top:8px;font-size:15px}
+.bubble{max-width:380px;background:#E9E9EB;border-radius:18px;padding:12px 16px;font-size:16px;line-height:1.4;margin-bottom:16px}
+.chanlink{color:#1264A3;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.slogo{width:14px;height:14px;display:inline-block}
+.switcher{position:fixed;left:12px;top:6px;z-index:20;display:flex;gap:6px;opacity:.15;transition:opacity .2s}
+.switcher:hover{opacity:1}
+.switcher a{background:#1D1C1D;color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:6px 12px}
+</style></head>
+<body><section id="ch-general" class="view ws-view">
+  <div class="topbar"><div class="search">🔍 Search Northfield State</div><span class="me" style="background:#7B4FC9">E</span></div>
+  <div class="ws-body"><aside class="sidebar">
+  <div class="sb-head"><span class="ws-icon">N</span><span class="ws-name">Northfield State</span></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">▾ Channels</div><a href="#ch-general" class="sb-item sb-active"><span class="hash">#</span>general</a><a href="#ch-econ-2010-study-group" class="sb-item"><span class="hash">#</span>econ-2010-study-group</a><a href="#ch-first-year-wolves" class="sb-item"><span class="hash">#</span>first-year-wolves</a><a href="#ch-intramural-soccer" class="sb-item"><span class="hash">#</span>intramural-soccer</a><a href="#ch-nftridelta" class="sb-item"><span class="hash">#</span>nftridelta</a><a href="#ch-nf-ambassadors" class="sb-item"><span class="hash">#</span>nf-ambassadors</a>
+    <div class="sb-sec">▾ Direct messages</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie<span class="apptag">APP</span></div><div class="sb-item"><span class="av-xs" style="background:#1A9A9A">B</span>Becca</div><div class="sb-item"><span class="av-xs" style="background:#D93A3A">P</span>Priya S.</div>
+    <div class="sb-sec">▾ Apps</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie</div>
+  </nav></aside>
+  <main class="chan">
+    <header class="chan-head"><div class="chan-title"><span class="muted">#</span>general <span class="muted small">⌄</span></div>
+      <a href="#ch-general-members" class="mem-btn"><span class="stack"><span class="av-stack" style="background:#C96442">W</span><span class="av-stack" style="background:#1A9A9A">B</span><span class="av-stack" style="background:#D93A3A">P</span></span><b>2,140</b></a></header>
+    <div class="tabs"><a href="#ch-general" class="tab tab-msgs">Messages</a><a href="#ch-general-pins" class="tab tab-pins">📌 Pins</a></div>
+    
+    <div class="msgs"><div class="daydiv"><span>Monday, November 16th</span></div><div class="msg"><span class="av" style="background:#C96442">W</span><div class="mbody"><div><span class="mname">Wolfie</span><span class="apptag">APP</span> <span class="mtime">8:00 AM</span></div><div class="mtext">Good morning, Wolfpack! Spring registration opens <b>Mon Nov 30</b>. Need help planning? Just ask me.</div><div></div></div></div></div>
+    <div id="ch-general-pins" class="pins"><div class="muted">No pinned items yet.</div></div>
+    <div class="composer">Message #general</div>
+  </main></div>
+  <div id="ch-general-members" class="overlay"><div class="modal"><div class="modal-head"><b class="big">2,140 members in #general</b><a href="#ch-general" class="close">×</a></div><ul class="mlist"><li class="row"><span class="av-sm" style="background:#C96442">W</span><div><b>Wolfie</b><span class="apptag">APP</span><div class="muted small">Campus assistant</div></div></li><li class="row"><span class="av-sm" style="background:#1A9A9A">B</span><div><b>Becca</b><div class="muted small">NF Ambassador</div></div></li><li class="row"><span class="av-sm" style="background:#D93A3A">P</span><div><b>Priya S.</b><div class="muted small">ECON 2010 Peer Tutor</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">A</span><div><b>Aiden L.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">S</span><div><b>Sofia R.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">N</span><div><b>Noah P.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">M</span><div><b>Maya C.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">L</span><div><b>Liam B.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">A</span><div><b>Ava W.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">E</span><div><b>Ethan H.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">Z</span><div><b>Zoe K.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">L</span><div><b>Lucas G.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">C</span><div><b>Chloe D.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">O</span><div><b>Owen F.</b><div class="muted small">Student</div></div></li></ul></div></div>
+</section><section id="ch-econ-2010-study-group" class="view ws-view">
+  <div class="topbar"><div class="search">🔍 Search Northfield State</div><span class="me" style="background:#7B4FC9">E</span></div>
+  <div class="ws-body"><aside class="sidebar">
+  <div class="sb-head"><span class="ws-icon">N</span><span class="ws-name">Northfield State</span></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">▾ Channels</div><a href="#ch-general" class="sb-item"><span class="hash">#</span>general</a><a href="#ch-econ-2010-study-group" class="sb-item sb-active"><span class="hash">#</span>econ-2010-study-group</a><a href="#ch-first-year-wolves" class="sb-item"><span class="hash">#</span>first-year-wolves</a><a href="#ch-intramural-soccer" class="sb-item"><span class="hash">#</span>intramural-soccer</a><a href="#ch-nftridelta" class="sb-item"><span class="hash">#</span>nftridelta</a><a href="#ch-nf-ambassadors" class="sb-item"><span class="hash">#</span>nf-ambassadors</a>
+    <div class="sb-sec">▾ Direct messages</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie<span class="apptag">APP</span></div><div class="sb-item"><span class="av-xs" style="background:#1A9A9A">B</span>Becca</div><div class="sb-item"><span class="av-xs" style="background:#D93A3A">P</span>Priya S.</div>
+    <div class="sb-sec">▾ Apps</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie</div>
+  </nav></aside>
+  <main class="chan">
+    <header class="chan-head"><div class="chan-title"><span class="muted">#</span>econ-2010-study-group <span class="muted small">⌄</span></div>
+      <a href="#ch-econ-2010-study-group-members" class="mem-btn"><span class="stack"><span class="av-stack" style="background:#D93A3A">P</span><span class="av-stack" style="background:#2F6FDE">M</span><span class="av-stack" style="background:#2E9E5B">E</span></span><b>14</b></a></header>
+    <div class="tabs"><a href="#ch-econ-2010-study-group" class="tab tab-msgs">Messages</a><a href="#ch-econ-2010-study-group-pins" class="tab tab-pins">📌 Pins 2</a></div>
+    <a href="#ch-econ-2010-study-group-pins" class="pinbar">📌 <b>Pinned:</b>&nbsp;Learning Commons 214 booked Wed 9 AM<span class="pinbar-more">2 pinned items</span></a>
+    <div class="msgs"><div class="daydiv"><span>Tuesday, November 17th</span></div><div class="msg"><span class="av" style="background:#D93A3A">P</span><div class="mbody"><div><span class="mname">Priya S.</span> <span class="mtime">5:12 PM</span></div><div class="mtext">Quiz night Thursday 7 PM, I'll bring snacks</div><div><span class="react">🙌 <b>6</b></span></div></div></div><div class="msg"><span class="av" style="background:#2F6FDE">M</span><div class="mbody"><div><span class="mname">Marcus T.</span> <span class="mtime">5:20 PM</span></div><div class="mtext">Who has the Ch. 7 notes?</div><div></div></div></div><div class="msg"><span class="av" style="background:#7B4FC9">E</span><div><span class="mname">Emma M.</span> <span class="mtime">5:31 PM</span><div class="mtext muted">joined #econ-2010-study-group.</div></div></div><div class="msg"><span class="av" style="background:#C96442">W</span><div class="mbody"><div><span class="mname">Wolfie</span><span class="apptag">APP</span> <span class="mtime">5:31 PM</span></div><div class="mtext">Welcome Emma! Chapter 7 notes are in the pinned folder.</div><a href="#ch-econ-2010-study-group-pins" class="folder-card"><span class="folder-ic">📁</span><span><b>Chapter 7 notes</b><br><span class="muted small">3 files · Pinned in this channel</span></span></a><div></div></div></div></div>
+    <div id="ch-econ-2010-study-group-pins" class="pins"><div class="pin-card row"><span class="av" style="background:#D93A3A">P</span><div><span class="mname">Priya S.</span><div class="mtext">Learning Commons 214 booked Wed 9 AM</div></div></div><div class="pin-card"><div class="row"><span class="folder-ic">📁</span><b>Chapter 7 notes</b></div><ul class="files"><li>📄 <span class="link">Ch7_Elasticity_Slides.pdf</span></li><li>📄 <span class="link">Ch7_Practice_Problems.pdf</span></li><li>📝 <span class="link">Ch7_Summary_Notes.docx</span></li></ul></div></div>
+    <div class="composer">Message #econ-2010-study-group</div>
+  </main></div>
+  <div id="ch-econ-2010-study-group-members" class="overlay"><div class="modal"><div class="modal-head"><b class="big">14 members in #econ-2010-study-group</b><a href="#ch-econ-2010-study-group" class="close">×</a></div><ul class="mlist"><li class="row"><span class="av-sm" style="background:#D93A3A">P</span><div><b>Priya S.</b><div class="muted small">ECON 2010 Peer Tutor</div></div></li><li class="row"><span class="av-sm" style="background:#2F6FDE">M</span><div><b>Marcus T.</b><div class="muted small">ECON 2010 Peer Tutor</div></div></li><li class="row"><span class="av-sm" style="background:#2E9E5B">E</span><div><b>Elena</b><div class="muted small">ECON 2010 classmate</div></div></li><li class="row"><span class="av-sm" style="background:#7B4FC9">E</span><div><b>Emma M.</b><div class="muted small">Junior · Economics</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">A</span><div><b>Aiden L.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">S</span><div><b>Sofia R.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">N</span><div><b>Noah P.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">M</span><div><b>Maya C.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">L</span><div><b>Liam B.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">A</span><div><b>Ava W.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">E</span><div><b>Ethan H.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">Z</span><div><b>Zoe K.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">L</span><div><b>Lucas G.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">C</span><div><b>Chloe D.</b><div class="muted small">Student</div></div></li></ul></div></div>
+</section><section id="ch-first-year-wolves" class="view ws-view">
+  <div class="topbar"><div class="search">🔍 Search Northfield State</div><span class="me" style="background:#7B4FC9">E</span></div>
+  <div class="ws-body"><aside class="sidebar">
+  <div class="sb-head"><span class="ws-icon">N</span><span class="ws-name">Northfield State</span></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">▾ Channels</div><a href="#ch-general" class="sb-item"><span class="hash">#</span>general</a><a href="#ch-econ-2010-study-group" class="sb-item"><span class="hash">#</span>econ-2010-study-group</a><a href="#ch-first-year-wolves" class="sb-item sb-active"><span class="hash">#</span>first-year-wolves</a><a href="#ch-intramural-soccer" class="sb-item"><span class="hash">#</span>intramural-soccer</a><a href="#ch-nftridelta" class="sb-item"><span class="hash">#</span>nftridelta</a><a href="#ch-nf-ambassadors" class="sb-item"><span class="hash">#</span>nf-ambassadors</a>
+    <div class="sb-sec">▾ Direct messages</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie<span class="apptag">APP</span></div><div class="sb-item"><span class="av-xs" style="background:#1A9A9A">B</span>Becca</div><div class="sb-item"><span class="av-xs" style="background:#D93A3A">P</span>Priya S.</div>
+    <div class="sb-sec">▾ Apps</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie</div>
+  </nav></aside>
+  <main class="chan">
+    <header class="chan-head"><div class="chan-title"><span class="muted">#</span>first-year-wolves <span class="muted small">⌄</span></div>
+      <a href="#ch-first-year-wolves-members" class="mem-btn"><span class="stack"><span class="av-stack" style="background:#C96442">W</span><span class="av-stack" style="background:#8A6D3B">J</span><span class="av-stack" style="background:#7B4FC9">E</span></span><b>1,312</b></a></header>
+    <div class="tabs"><a href="#ch-first-year-wolves" class="tab tab-msgs">Messages</a><a href="#ch-first-year-wolves-pins" class="tab tab-pins">📌 Pins 1</a></div>
+    
+    <div class="msgs"><div class="daydiv"><span>Monday, August 24th</span></div><div class="msg"><span class="av" style="background:#C96442">W</span><div class="mbody"><div><span class="mname">Wolfie</span><span class="apptag">APP</span> <span class="mtime">9:00 AM</span></div><div class="mtext">Welcome to the Wolfpack, first-years! 🐺 The campus map and move-in tips are pinned.</div><div></div></div></div><div class="daydiv"><span>Tuesday, November 17th</span></div><div class="msg"><span class="av" style="background:#8A6D3B">J</span><div class="mbody"><div><span class="mname">Jordan K.</span> <span class="mtime">4:48 PM</span></div><div class="mtext">Anyone want to walk to the first home game together?</div><div><span class="react">🙋 <b>9</b></span></div></div></div><div class="msg"><span class="av" style="background:#7B4FC9">E</span><div><span class="mname">Emma M.</span> <span class="mtime">5:33 PM</span><div class="mtext muted">joined #first-year-wolves.</div></div></div></div>
+    <div id="ch-first-year-wolves-pins" class="pins"><div class="pin-card row"><span class="av" style="background:#C96442">W</span><div><span class="mname">Wolfie</span><span class="apptag">APP</span><div class="mtext">Campus map and move-in tips</div></div></div></div>
+    <div class="composer">Message #first-year-wolves</div>
+  </main></div>
+  <div id="ch-first-year-wolves-members" class="overlay"><div class="modal"><div class="modal-head"><b class="big">1,312 members in #first-year-wolves</b><a href="#ch-first-year-wolves" class="close">×</a></div><ul class="mlist"><li class="row"><span class="av-sm" style="background:#C96442">W</span><div><b>Wolfie</b><span class="apptag">APP</span><div class="muted small">Campus assistant</div></div></li><li class="row"><span class="av-sm" style="background:#8A6D3B">J</span><div><b>Jordan K.</b><div class="muted small">First-year</div></div></li><li class="row"><span class="av-sm" style="background:#7B4FC9">E</span><div><b>Emma M.</b><div class="muted small">Junior · Economics</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">A</span><div><b>Aiden L.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">S</span><div><b>Sofia R.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">N</span><div><b>Noah P.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">M</span><div><b>Maya C.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">L</span><div><b>Liam B.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">A</span><div><b>Ava W.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">E</span><div><b>Ethan H.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">Z</span><div><b>Zoe K.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">L</span><div><b>Lucas G.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">C</span><div><b>Chloe D.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">O</span><div><b>Owen F.</b><div class="muted small">Student</div></div></li></ul></div></div>
+</section><section id="ch-intramural-soccer" class="view ws-view">
+  <div class="topbar"><div class="search">🔍 Search Northfield State</div><span class="me" style="background:#7B4FC9">E</span></div>
+  <div class="ws-body"><aside class="sidebar">
+  <div class="sb-head"><span class="ws-icon">N</span><span class="ws-name">Northfield State</span></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">▾ Channels</div><a href="#ch-general" class="sb-item"><span class="hash">#</span>general</a><a href="#ch-econ-2010-study-group" class="sb-item"><span class="hash">#</span>econ-2010-study-group</a><a href="#ch-first-year-wolves" class="sb-item"><span class="hash">#</span>first-year-wolves</a><a href="#ch-intramural-soccer" class="sb-item sb-active"><span class="hash">#</span>intramural-soccer</a><a href="#ch-nftridelta" class="sb-item"><span class="hash">#</span>nftridelta</a><a href="#ch-nf-ambassadors" class="sb-item"><span class="hash">#</span>nf-ambassadors</a>
+    <div class="sb-sec">▾ Direct messages</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie<span class="apptag">APP</span></div><div class="sb-item"><span class="av-xs" style="background:#1A9A9A">B</span>Becca</div><div class="sb-item"><span class="av-xs" style="background:#D93A3A">P</span>Priya S.</div>
+    <div class="sb-sec">▾ Apps</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie</div>
+  </nav></aside>
+  <main class="chan">
+    <header class="chan-head"><div class="chan-title"><span class="muted">#</span>intramural-soccer <span class="muted small">⌄</span></div>
+      <a href="#ch-intramural-soccer-members" class="mem-btn"><span class="stack"><span class="av-stack" style="background:#5A6B7B">D</span><span class="av-stack" style="background:#7B4FC9">E</span></span><b>86</b></a></header>
+    <div class="tabs"><a href="#ch-intramural-soccer" class="tab tab-msgs">Messages</a><a href="#ch-intramural-soccer-pins" class="tab tab-pins">📌 Pins</a></div>
+    
+    <div class="msgs"><div class="daydiv"><span>Tuesday, November 17th</span></div><div class="msg"><span class="av" style="background:#5A6B7B">D</span><div class="mbody"><div><span class="mname">Diego R.</span> <span class="mtime">2:10 PM</span></div><div class="mtext">Spring rosters open Monday. Practice is Tuesday at 7 PM on Field 3. ⚽</div><div><span class="react">⚽ <b>12</b></span></div></div></div><div class="msg"><span class="av" style="background:#7B4FC9">E</span><div><span class="mname">Emma M.</span> <span class="mtime">5:33 PM</span><div class="mtext muted">joined #intramural-soccer.</div></div></div></div>
+    <div id="ch-intramural-soccer-pins" class="pins"><div class="muted">No pinned items yet.</div></div>
+    <div class="composer">Message #intramural-soccer</div>
+  </main></div>
+  <div id="ch-intramural-soccer-members" class="overlay"><div class="modal"><div class="modal-head"><b class="big">86 members in #intramural-soccer</b><a href="#ch-intramural-soccer" class="close">×</a></div><ul class="mlist"><li class="row"><span class="av-sm" style="background:#5A6B7B">D</span><div><b>Diego R.</b><div class="muted small">Intramural soccer captain</div></div></li><li class="row"><span class="av-sm" style="background:#7B4FC9">E</span><div><b>Emma M.</b><div class="muted small">Junior · Economics</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">A</span><div><b>Aiden L.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">S</span><div><b>Sofia R.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">N</span><div><b>Noah P.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">M</span><div><b>Maya C.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">L</span><div><b>Liam B.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">A</span><div><b>Ava W.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">E</span><div><b>Ethan H.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">Z</span><div><b>Zoe K.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">L</span><div><b>Lucas G.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">C</span><div><b>Chloe D.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">O</span><div><b>Owen F.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">G</span><div><b>Grace N.</b><div class="muted small">Student</div></div></li></ul></div></div>
+</section><section id="ch-nftridelta" class="view ws-view">
+  <div class="topbar"><div class="search">🔍 Search Northfield State</div><span class="me" style="background:#7B4FC9">E</span></div>
+  <div class="ws-body"><aside class="sidebar">
+  <div class="sb-head"><span class="ws-icon">N</span><span class="ws-name">Northfield State</span></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">▾ Channels</div><a href="#ch-general" class="sb-item"><span class="hash">#</span>general</a><a href="#ch-econ-2010-study-group" class="sb-item"><span class="hash">#</span>econ-2010-study-group</a><a href="#ch-first-year-wolves" class="sb-item"><span class="hash">#</span>first-year-wolves</a><a href="#ch-intramural-soccer" class="sb-item"><span class="hash">#</span>intramural-soccer</a><a href="#ch-nftridelta" class="sb-item sb-active"><span class="hash">#</span>nftridelta</a><a href="#ch-nf-ambassadors" class="sb-item"><span class="hash">#</span>nf-ambassadors</a>
+    <div class="sb-sec">▾ Direct messages</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie<span class="apptag">APP</span></div><div class="sb-item"><span class="av-xs" style="background:#1A9A9A">B</span>Becca</div><div class="sb-item"><span class="av-xs" style="background:#D93A3A">P</span>Priya S.</div>
+    <div class="sb-sec">▾ Apps</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie</div>
+  </nav></aside>
+  <main class="chan">
+    <header class="chan-head"><div class="chan-title"><span class="muted">#</span>nftridelta <span class="muted small">⌄</span></div>
+      <a href="#ch-nftridelta-members" class="mem-btn"><span class="stack"><span class="av-stack" style="background:#D93A3A">P</span><span class="av-stack" style="background:#2E9E5B">E</span></span><b>48</b></a></header>
+    <div class="tabs"><a href="#ch-nftridelta" class="tab tab-msgs">Messages</a><a href="#ch-nftridelta-pins" class="tab tab-pins">📌 Pins</a></div>
+    
+    <div class="msgs"><div class="daydiv"><span>Thursday, November 19th</span></div><div class="msg"><span class="av" style="background:#D93A3A">P</span><div class="mbody"><div><span class="mname">Priya S.</span> <span class="mtime">5:48 PM</span></div><div class="mtext">Student section is open seating tomorrow for <b>Wolves vs. Lakeshore</b>. Gates open at 6.</div><div></div></div></div><div class="msg"><span class="av" style="background:#2E9E5B">E</span><div class="mbody"><div><span class="mname">Elena</span> <span class="mtime">5:52 PM</span></div><div class="mtext">I'm in. Meet at Gate B at 6:15?</div><div><span class="react">👍 <b>7</b></span><span class="react">🐺 <b>3</b></span></div></div></div></div>
+    <div id="ch-nftridelta-pins" class="pins"><div class="muted">No pinned items yet.</div></div>
+    <div class="composer">Message #nftridelta</div>
+  </main></div>
+  <div id="ch-nftridelta-members" class="overlay"><div class="modal"><div class="modal-head"><b class="big">48 members in #nftridelta</b><a href="#ch-nftridelta" class="close">×</a></div><ul class="mlist"><li class="row"><span class="av-sm" style="background:#D93A3A">P</span><div><b>Priya S.</b><div class="muted small">ECON 2010 Peer Tutor</div></div></li><li class="row"><span class="av-sm" style="background:#2E9E5B">E</span><div><b>Elena</b><div class="muted small">ECON 2010 classmate</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">A</span><div><b>Aiden L.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">S</span><div><b>Sofia R.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">N</span><div><b>Noah P.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">M</span><div><b>Maya C.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">L</span><div><b>Liam B.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">A</span><div><b>Ava W.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">E</span><div><b>Ethan H.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">Z</span><div><b>Zoe K.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">L</span><div><b>Lucas G.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">C</span><div><b>Chloe D.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">O</span><div><b>Owen F.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">G</span><div><b>Grace N.</b><div class="muted small">Student</div></div></li></ul></div></div>
+</section><section id="ch-nf-ambassadors" class="view ws-view">
+  <div class="topbar"><div class="search">🔍 Search Northfield State</div><span class="me" style="background:#7B4FC9">E</span></div>
+  <div class="ws-body"><aside class="sidebar">
+  <div class="sb-head"><span class="ws-icon">N</span><span class="ws-name">Northfield State</span></div>
+  <nav class="sb-nav">
+    <div class="sb-sec">▾ Channels</div><a href="#ch-general" class="sb-item"><span class="hash">#</span>general</a><a href="#ch-econ-2010-study-group" class="sb-item"><span class="hash">#</span>econ-2010-study-group</a><a href="#ch-first-year-wolves" class="sb-item"><span class="hash">#</span>first-year-wolves</a><a href="#ch-intramural-soccer" class="sb-item"><span class="hash">#</span>intramural-soccer</a><a href="#ch-nftridelta" class="sb-item"><span class="hash">#</span>nftridelta</a><a href="#ch-nf-ambassadors" class="sb-item sb-active"><span class="hash">#</span>nf-ambassadors</a>
+    <div class="sb-sec">▾ Direct messages</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie<span class="apptag">APP</span></div><div class="sb-item"><span class="av-xs" style="background:#1A9A9A">B</span>Becca</div><div class="sb-item"><span class="av-xs" style="background:#D93A3A">P</span>Priya S.</div>
+    <div class="sb-sec">▾ Apps</div><div class="sb-item"><span class="av-xs" style="background:#C96442">W</span>Wolfie</div>
+  </nav></aside>
+  <main class="chan">
+    <header class="chan-head"><div class="chan-title"><span class="muted">#</span>nf-ambassadors <span class="muted small">⌄</span></div>
+      <a href="#ch-nf-ambassadors-members" class="mem-btn"><span class="stack"><span class="av-stack" style="background:#1A9A9A">B</span><span class="av-stack" style="background:#C96442">W</span></span><b>112</b></a></header>
+    <div class="tabs"><a href="#ch-nf-ambassadors" class="tab tab-msgs">Messages</a><a href="#ch-nf-ambassadors-pins" class="tab tab-pins">📌 Pins 1</a></div>
+    
+    <div class="msgs"><div class="daydiv"><span>Monday, November 2nd</span></div><div class="msg msg-pinned"><span class="av" style="background:#C96442">W</span><div class="mbody"><div class="muted tiny">📌 Pinned by Becca</div><div><span class="mname">Wolfie</span><span class="apptag">APP</span> <span class="mtime">10:00 AM</span></div><div class="mtext"><b>How the Ambassador program works</b><br>Earn Pack Points and potential income by sharing Wolfpack content with your network. Click Apply to get started.</div><div><a href="#ch-nf-ambassadors-apply" class="btn-go">Apply</a></div><div></div></div></div><div class="daydiv"><span>Saturday, November 21st</span></div><div class="msg"><span class="av" style="background:#1A9A9A">B</span><div class="mbody"><div><span class="mname">Becca</span> <span class="mtime">9:40 AM</span></div><div class="mtext">Posted my Wolfpack haul today. Spring applications are open.</div><div><span class="react">🔥 <b>14</b></span><span class="react">🐺 <b>6</b></span></div></div></div></div>
+    <div id="ch-nf-ambassadors-pins" class="pins"><div class="pin-card row"><span class="av" style="background:#C96442">W</span><div><span class="mname">Wolfie</span><span class="apptag">APP</span><div class="mtext">How the Ambassador program works</div></div></div></div>
+    <div class="composer">Message #nf-ambassadors</div>
+  </main></div>
+  <div id="ch-nf-ambassadors-members" class="overlay"><div class="modal"><div class="modal-head"><b class="big">112 members in #nf-ambassadors</b><a href="#ch-nf-ambassadors" class="close">×</a></div><ul class="mlist"><li class="row"><span class="av-sm" style="background:#1A9A9A">B</span><div><b>Becca</b><div class="muted small">NF Ambassador</div></div></li><li class="row"><span class="av-sm" style="background:#C96442">W</span><div><b>Wolfie</b><span class="apptag">APP</span><div class="muted small">Campus assistant</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">A</span><div><b>Aiden L.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">S</span><div><b>Sofia R.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">N</span><div><b>Noah P.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">M</span><div><b>Maya C.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">L</span><div><b>Liam B.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">A</span><div><b>Ava W.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#6B7280">E</span><div><b>Ethan H.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#9A7B4F">Z</span><div><b>Zoe K.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#4B7F8C">L</span><div><b>Lucas G.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#8C5A7A">C</span><div><b>Chloe D.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#5F7A4B">O</span><div><b>Owen F.</b><div class="muted small">Student</div></div></li><li class="row"><span class="av-sm" style="background:#7A6A9C">G</span><div><b>Grace N.</b><div class="muted small">Student</div></div></li></ul></div></div><div id="ch-nf-ambassadors-apply" class="overlay"><div class="modal wide">
+  <div class="modal-head"><span class="row"><span class="av-sm" style="background:#C96442">W</span><b class="big">Apply: NF Ambassador</b></span><a href="#ch-nf-ambassadors" class="close">×</a></div>
+  <div class="form">
+    <label>Full name<input value="Emma M."></label>
+    <label>Class year<select><option>First-year</option><option>Sophomore</option><option selected>Junior</option><option>Senior</option></select></label>
+    <label>Social handle you'd share from<input placeholder="@emma.wolfpack"></label>
+    <label>Why do you want to be an Ambassador?<textarea rows="3" placeholder="A sentence or two"></textarea></label>
+    <div class="form-actions"><a href="#ch-nf-ambassadors" class="btn-ghost">Cancel</a><a href="#ch-nf-ambassadors-applied" class="btn-go">Submit</a></div>
+  </div></div></div>
+<div id="ch-nf-ambassadors-applied" class="overlay"><div class="modal wide center"><div class="huge">🐺</div><b class="big">Application received!</b>
+  <div class="muted">Becca and the Ambassador team will follow up in #nf-ambassadors.</div><div><a href="#ch-nf-ambassadors" class="btn-go">Done</a></div></div></div>
+</section><section id="cards" class="view cards-view">
+  <div class="cards-grid">
+    <div><div class="cap">Tue Nov 17, 5:30 PM · Invite card</div>
+      <div class="invite">
+        <div class="invite-head"><svg viewBox="0 0 54 54" class="slogo"><path fill="#36C5F0" d="M19.7 0a5.4 5.4 0 0 0 0 10.8h5.4V5.4A5.4 5.4 0 0 0 19.7 0m0 14.4H5.4a5.4 5.4 0 0 0 0 10.8h14.3a5.4 5.4 0 0 0 0-10.8"/><path fill="#2EB67D" d="M54 19.8a5.4 5.4 0 0 0-10.8 0v5.4h5.4a5.4 5.4 0 0 0 5.4-5.4m-14.4 0V5.4a5.4 5.4 0 0 0-10.8 0v14.4a5.4 5.4 0 0 0 10.8 0"/><path fill="#ECB22E" d="M34.2 54a5.4 5.4 0 0 0 0-10.8h-5.4v5.4a5.4 5.4 0 0 0 5.4 5.4m0-14.4h14.4a5.4 5.4 0 0 0 0-10.8H34.2a5.4 5.4 0 0 0 0 10.8"/><path fill="#E01E5A" d="M0 34.2a5.4 5.4 0 0 0 10.8 0v-5.4H5.4A5.4 5.4 0 0 0 0 34.2m14.4 0v14.4a5.4 5.4 0 0 0 10.8 0V34.2a5.4 5.4 0 0 0-10.8 0"/></svg># Northfield State on Slack</div>
+        <div class="invite-body">
+          <div class="invite-title">econ-2010-study-group</div>
+          <div class="muted">14 members · <b class="green">3 from your section</b></div>
+          <div class="stack invite-stack"><span class="av-stack big-stack" style="background:#D93A3A">P</span><span class="av-stack big-stack" style="background:#2F6FDE">M</span><span class="av-stack big-stack" style="background:#2E9E5B">E</span><span class="av-stack big-stack plus">+11</span></div>
+          <div>Priya, Marcus, Elena</div>
+          <a href="#ch-econ-2010-study-group" class="btn-join">Join</a>
+        </div></div></div>
+    <div><div class="cap">Channel links in the thread</div>
+      <div class="bubble">In <a class="chanlink" href="#ch-nftridelta"><svg viewBox="0 0 54 54" class="slogo"><path fill="#36C5F0" d="M19.7 0a5.4 5.4 0 0 0 0 10.8h5.4V5.4A5.4 5.4 0 0 0 19.7 0m0 14.4H5.4a5.4 5.4 0 0 0 0 10.8h14.3a5.4 5.4 0 0 0 0-10.8"/><path fill="#2EB67D" d="M54 19.8a5.4 5.4 0 0 0-10.8 0v5.4h5.4a5.4 5.4 0 0 0 5.4-5.4m-14.4 0V5.4a5.4 5.4 0 0 0-10.8 0v14.4a5.4 5.4 0 0 0 10.8 0"/><path fill="#ECB22E" d="M34.2 54a5.4 5.4 0 0 0 0-10.8h-5.4v5.4a5.4 5.4 0 0 0 5.4 5.4m0-14.4h14.4a5.4 5.4 0 0 0 0-10.8H34.2a5.4 5.4 0 0 0 0 10.8"/><path fill="#E01E5A" d="M0 34.2a5.4 5.4 0 0 0 10.8 0v-5.4H5.4A5.4 5.4 0 0 0 0 34.2m14.4 0v14.4a5.4 5.4 0 0 0 10.8 0V34.2a5.4 5.4 0 0 0-10.8 0"/></svg>#NFTriDelta</a> (Slack), Priya, Elena and 5 others from your channels are discussing plans to sit in the open student section.</div>
+      <div class="bubble">The Northfield State Ambassador program lets you earn Pack Points and potential income when you share Wolfpack content with your network. You can see it in action in <a class="chanlink" href="#ch-nf-ambassadors"><svg viewBox="0 0 54 54" class="slogo"><path fill="#36C5F0" d="M19.7 0a5.4 5.4 0 0 0 0 10.8h5.4V5.4A5.4 5.4 0 0 0 19.7 0m0 14.4H5.4a5.4 5.4 0 0 0 0 10.8h14.3a5.4 5.4 0 0 0 0-10.8"/><path fill="#2EB67D" d="M54 19.8a5.4 5.4 0 0 0-10.8 0v5.4h5.4a5.4 5.4 0 0 0 5.4-5.4m-14.4 0V5.4a5.4 5.4 0 0 0-10.8 0v14.4a5.4 5.4 0 0 0 10.8 0"/><path fill="#ECB22E" d="M34.2 54a5.4 5.4 0 0 0 0-10.8h-5.4v5.4a5.4 5.4 0 0 0 5.4 5.4m0-14.4h14.4a5.4 5.4 0 0 0 0-10.8H34.2a5.4 5.4 0 0 0 0 10.8"/><path fill="#E01E5A" d="M0 34.2a5.4 5.4 0 0 0 10.8 0v-5.4H5.4A5.4 5.4 0 0 0 0 34.2m14.4 0v14.4a5.4 5.4 0 0 0 10.8 0V34.2a5.4 5.4 0 0 0-10.8 0"/></svg>#nf-ambassadors</a> on Slack, and apply to get started.</div>
+    </div>
+  </div>
+</section>
+<div class="switcher"><a href="#ch-econ-2010-study-group">Slack workspace</a><a href="#cards">Text-thread cards</a></div>
+</body></html>
